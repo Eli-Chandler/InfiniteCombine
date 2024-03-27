@@ -1,94 +1,49 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { ChakraProvider, Box } from '@chakra-ui/react';
+import { fetchInitialWords } from './api/wordsApi';
+import {WordDTO} from "./props/Word";
+import { WordList } from "./components/WordList";
+import { WordForm} from "./components/WordForm";
 
-class Word {
-    constructor(public word: string, public emoji: string, public id: number) {}
+const App: React.FC = () => {
+    const [words, setWords] = useState<WordDTO[]>([]);
 
-    static fromJson(json: any): Word {
-        return new Word(json.word, json.emoji, json.id);
-    }
-}
+    useEffect(() => {
+        const loadInitialWords = async () => {
+            const initialWords = await fetchInitialWords();
+            setWords(initialWords);
+        };
 
-class App extends Component {
-    state = {
-        words: [] as Word[]
-    }
+        loadInitialWords();
+    }, []);
 
-    async componentDidMount() {
-        const response = await axios.get('http://localhost:3000/words/initial');
-        this.setState({ words: response.data.map(Word.fromJson) });
-    }
+    const addWord = (newWord: WordDTO) => {
+        // First, mark all existing words as not new
+        const updatedWords = words.map(word => ({ ...word, isNew: false }));
 
-    async addWord(word: Word) {
-        if (this.state.words.includes(word)) {
-            return; // don't add duplicates
+        // Check if the newWord exists in the array
+        const wordIndex = updatedWords.findIndex(word => word.id === newWord.id);
+
+        if (wordIndex !== -1) {
+            // Replace the existing word with newWord
+            updatedWords[wordIndex] = { ...newWord, isNew: true };
+        } else {
+            // Append newWord to the array
+            updatedWords.push({ ...newWord, isNew: true });
         }
-        this.setState({ words: [...this.state.words, word] });
+
+        // Finally, update the state
+        setWords(updatedWords);
     }
 
-    render() {
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <WordList words={this.state.words}/>
-                    <WordForm addWord={this.addWord.bind(this)}/>
-                </header>
-            </div>
-        );
-    }
-}
-
-interface WordListProps {
-    words: Word[];
-}
-
-class WordList extends Component<WordListProps> {
-    render() {
-        const words = this.props.words;
-
-        return (
-            <div>
-                {words.map((word) => (
-                    <div key={word.id}>
-                        {word.word} - {word.emoji}
-                    </div>
-                ))}
-            </div>
-        );
-    }
-}
-
-interface WordFormProps {
-    addWord: (word: Word) => void;
-}
-
-class WordForm extends Component<WordFormProps> {
-    handleSubmit = async (event: any) => {
-        event.preventDefault();
-        const word1: string = event.target.word1.value;
-        const word2: string = event.target.word2.value;
-
-        const response = await axios.get(`http://localhost:3000/words/combine?word1=${word1}&word2=${word2}`);
-        const word = Word.fromJson(response.data);
-
-        this.props.addWord(word);
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Word 1:
-                    <input type="text" name="word1" />
-                </label>
-                <label>
-                    Word 2:
-                    <input type="text" name="word2" />
-                </label>
-                <button type="submit">Combine</button>
-            </form>
-        );
-    }
+    return (
+        <ChakraProvider>
+            <Box p={4}>
+                <WordList words={words} />
+                <WordForm addWord={addWord} />
+            </Box>
+        </ChakraProvider>
+    );
 }
 
 export default App;

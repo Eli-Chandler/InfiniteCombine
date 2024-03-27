@@ -25,26 +25,15 @@ export class GptWordRepository extends WordRepository {
 
     private async fetchCompletion(prompt: string): Promise<OpenAI.ChatCompletion> {
         return this.openai.chat.completions.create({
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
                     content: `Your job is to combine two words given by the user, similar to the game 'little alchemy'
-                    
-                    Guidelines:
-                    
-                    You should return a word or concept, not an entire sentence.
-                    i.e. Atmosphere = Good, A specialized type of air that exists in a particular sphere or environment.  = Bad.
-                    You may return the same word as one of the input words. i.e. water + nothing = water. However, you must retain the case of the input word.
-                    You may return a compound word. i.e. water + fall = waterfall.
-                    You may return a portmanteau. i.e. breakfast + lunch = brunch.
-                    
-                    
-                    
                     You should do this in the following way:
                     
-                    Reasoning - Combination: 2-3 sentences deciding what a combination of these words would be.
-                    Reasoning - emoji: 2-3 sentences deciding what emojis best represents the combined word. You can use 1-3 emojis to represent it.
+                    Reasoning - Combination: 10 words deciding what a combination of these words would be.
+                    Reasoning - emoji: 10 words deciding what emojis best represents the combined word. You can use 1-3 emojis to represent it.
                     Result: In this exact format:
                     --BEGIN RESULT--
                     \`\`\`json
