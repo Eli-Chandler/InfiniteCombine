@@ -57,12 +57,21 @@ app.get("/words/combine", async (req: Request, res: Response) => {
     res.send(JSON.stringify(result));
 });
 
-app.listen(port, async () => {
-    await wordService.addWord(new Word("Fire", "🔥", 1))
-    await wordService.addWord(new Word("Water", "💧", 2))
-    await wordService.addWord(new Word("Earth", "🌍", 3))
-    await wordService.addWord(new Word("Air", "💨", 4))
-    console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+async function initializeWords() {
+    await wordService.addWord(new Word("Fire", "🔥", 1));
+    await wordService.addWord(new Word("Water", "💧", 2));
+    await wordService.addWord(new Word("Earth", "🌍", 3));
+    await wordService.addWord(new Word("Air", "💨", 4));
+}
+
+// Modify this part to wait for initialization before listening
+async function startServer() {
+    await initializeWords(); // Wait for the initialization to complete
+    app.listen(port, () => {
+        console.log(`[server]: Server is running at http://localhost:${port}`);
+    });
+}
+
+startServer(); // Start the server after initialization
 
 export default app;

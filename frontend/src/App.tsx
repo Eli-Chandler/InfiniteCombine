@@ -42,7 +42,6 @@ const App: React.FC = () => {
         <ChakraProvider>
             <Box p={4}>
                 <WordList words={words} addWord={addWord}/>
-                <WordForm addWord={addWord} />
             </Box>
         </ChakraProvider>
     );
