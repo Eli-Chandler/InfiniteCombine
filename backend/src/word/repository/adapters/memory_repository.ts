@@ -41,6 +41,6 @@ export class MemoryWordRepository extends  StoringWordRepository {
     }
 
     private serializeWordCombination(word1: Word, word2: Word): string {
-        return `${word1.word}+${word2.word}`;
+        return `${word1.id}+${word2.id}`;
     }
 }

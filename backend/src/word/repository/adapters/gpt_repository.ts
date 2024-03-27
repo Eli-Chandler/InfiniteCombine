@@ -29,21 +29,38 @@ export class GptWordRepository extends WordRepository {
             messages: [
                 {
                     role: 'system',
-                    content: `Your job is to combine two words given by the user, similar to the game 'little alchemy'
-                    You should do this in the following way:
-                    
-                    Reasoning - Combination: 10 words deciding what a combination of these words would be.
-                    Reasoning - emoji: 10 words deciding what emojis best represents the combined word. You can use 1-3 emojis to represent it.
-                    Result: In this exact format:
-                    --BEGIN RESULT--
-                    \`\`\`json
-                    {
-                        "combination": "the combination",
-                        "emoji": "the emoji"
-                    }
-                    \`\`\`
-                    --END RESULT--
-                    `
+                    content:
+                        `
+Your job is to combine two words given by the user, inspired by 'Little Alchemy'. Given a combination of elements, craft a brief backstory that logically leads to the creation of a new, imaginative item or concept. The elements provided in the combination should guide the narrative. After establishing the backstory, conclude with the specific item or concept that emerges from this unique combination.
+
+Here are some guidelines to follow:
+Do's and Don'ts:
+
+- Do follow realistic principles for combinations, like "earth + seed" equals "seedling", keeping results grounded in real-world logic.
+
+- Do aim for simplicity over complexity. The best results are often the simplest.
+
+- Do follow the little alchemy's original combinations as a guide for any existing combinations.
+
+- Don't include anything other than the resulting word in the result, for example "earth + seed = seedling", "combination": "seedling"., NOT "combination": "earth + seed = seedling".
+
+- Do use proper capitalisation in the final result.
+
+Before you give any response you should do the following:
+
+Before deciding on the combination, ruminate on the elements provided. Think about how they could logically combine to create something new. Consider the properties of each element and how they might interact.
+Do this in 2-3 short sentences. Then and only then, conclude with the combination and an appropriate emoji to represent it.
+
+Finally, give the result in this format (include the --BEGIN RESULT--, --END RESULT--, \`\`\`json and \`\`\` tags):
+--BEGIN RESULT--
+\`\`\`json
+{
+    "combination": "[The combination]",
+    "emoji": "[Appropriate emoji]"
+}
+\`\`\`
+--END RESULT--
+`
                 },
                 {
                     role: "user",
@@ -54,20 +71,21 @@ export class GptWordRepository extends WordRepository {
     }
 
     private parseCompletionResult(completion: OpenAI.ChatCompletion): Word | undefined {
-        // Improved regex to handle any number of whitespace characters including new lines before and after the JSON content
-        const resultPattern = /--BEGIN RESULT--\s*```json\s*({[\s\S]*?})\s*```\s*--END RESULT--/m;
+        const resultPattern = /--BEGIN RESULT--\s*```json\s*([\s\S]*?)\s*```\s*--END RESULT--/m;
         const match = completion.choices[0].message.content?.match(resultPattern);
 
         if (match && match[1]) {
+            const jsonContent = match[1].trim();
             try {
-                const result = JSON.parse(match[1].trim());
+                const result = JSON.parse(jsonContent);
                 return new Word(result.combination, result.emoji);
             } catch (error) {
-                console.error("Error parsing JSON result:", error);
+                console.error("Error parsing JSON:", error);
+                // Here, it might be helpful to log the jsonContent to see what's failing
                 return undefined;
             }
         } else {
-            console.log(`No valid result found in the completion. Completion: ${completion.choices[0].message.content}`);
+            console.log(`No valid result found. Content: ${completion.choices[0].message.content}`);
             return undefined;
         }
     }

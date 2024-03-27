@@ -7,6 +7,7 @@ export interface WordDTO {
 
 export interface WordListProp {
     words: WordDTO[]
+    addWord: (word: WordDTO) => void;
 }
 
 export interface WordFormProp {
