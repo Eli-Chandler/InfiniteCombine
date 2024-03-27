@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { WordDTO } from "../props/Word";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:3000";
 
 export async function fetchInitialWords(): Promise<WordDTO[]> {
-    let response = await axios.get("http://localhost:3000/words/initial")
+    let response = await axios.get(`${baseUrl}/words/initial`)
     return response.data.map(
         (wordData: WordDTO) => ({
             word: wordData.word,
@@ -14,7 +19,7 @@ export async function fetchInitialWords(): Promise<WordDTO[]> {
 }
 
 export async function combineWords(word1: string, word2: string): Promise<WordDTO> {
-    let response = await axios.get(`http://localhost:3000/words/combine?word1=${word1}&word2=${word2}`)
+    let response = await axios.get(`${baseUrl}/words/combine?word1=${word1}&word2=${word2}`)
     return {
         word: response.data.word,
         emoji: response.data.emoji,
