@@ -1,9 +1,6 @@
 import { WordRepository } from "../word_repository";
 import { Word } from "../../model/word_model";
 import { OpenAI } from "openai";
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export class GptWordRepository extends WordRepository {
     private openai: OpenAI;

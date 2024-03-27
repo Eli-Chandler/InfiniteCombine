@@ -4,8 +4,9 @@ import { GptWordRepository } from "./word/repository/adapters/gpt_repository";
 import {StoringAndSecondaryWordService} from "./word/service/adapters/StoringAndSecondaryWordService";
 import {Word} from "./word/model/word_model";
 import cors from "cors";
+import dotenv from "dotenv";
 
-
+dotenv.config();
 
 const app: Express = express();
 const port: number = 3000;
