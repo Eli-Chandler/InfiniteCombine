@@ -37,13 +37,23 @@ export class PostgresWordRepository extends StoringWordRepository {
     }
 
     async getWordByWordCombination(word1: Word, word2: Word): Promise<Word | null> {
+        if (word1.id == null || word2.id == null) {
+            throw new Error('Word IDs must be set');
+        }
+
+        console.log('Getting word by combination', word1.word, word2.word, word1.id, word2.id)
 
         const query = 'SELECT combination_word_id FROM word_combinations WHERE word1_id = $1 AND word2_id = $2';
-        const values = [word1.id, word2.id];
+        // Sort the words id by alphabetical order
+        const [firstWord, secondWord] = word1.id < word2.id ? [word1, word2] : [word2, word1];
+        const values = [firstWord.id, secondWord.id];
+
 
         const client = await this.pool.connect();
         const res = await client.query<{combination_word_id: number}>(query, values);
         client.release();
+
+        console.log(res.rows)
 
         if (res.rows.length == 0) {
             return null;
@@ -76,8 +86,6 @@ export class PostgresWordRepository extends StoringWordRepository {
     }
 
     async addWordCombination(word1: Word, word2: Word, result: Word) {
-        await this.addWord(word1);
-        await this.addWord(word2);
         await this.addWord(result);
 
 
