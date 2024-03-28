@@ -22,7 +22,7 @@ export class GptWordRepository extends WordRepository {
 
     private async fetchCompletion(prompt: string): Promise<OpenAI.ChatCompletion> {
         return this.openai.chat.completions.create({
-            model: 'gpt-4',
+            model: process.env.OPENAI_MODEL_ID || 'gpt-3.5-turbo',
             messages: [
                 {
                     role: 'system',
