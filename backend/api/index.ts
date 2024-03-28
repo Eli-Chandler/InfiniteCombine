@@ -43,17 +43,18 @@ app.get("/words/initial", async (req: Request, res: Response) => {
 
 app.get("/words/combine", async (req: Request, res: Response) => {
     // Get query params of wordString1, wordString2
-    const wordString1: string = req.query.word1 as string;
-    const wordString2: string = req.query.word2 as string;
 
-    if (!wordString1 || !wordString2) {
-        res.status(400).send("Missing query params wordString1 or wordString2");
+    const wordId1: string = req.query.word1 as string;
+    const wordId2: string = req.query.word2 as string;
+
+    if (!wordId1 || !wordId2) {
+        res.status(400).send("Missing query params wordId1 or wordId2");
         return;
     }
 
     // Combine the words
-    let word1: Word | null = await wordService.getWordByString(wordString1);
-    let word2: Word | null = await wordService.getWordByString(wordString2);
+    let word1: Word | null = await wordService.getWordById(wordId1);
+    let word2: Word | null = await wordService.getWordById(wordId2);
 
     if (word1 == undefined || word2 == undefined) {
         res.status(404).send("Word not found");

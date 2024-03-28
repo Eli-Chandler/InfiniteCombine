@@ -9,15 +9,15 @@ import {type} from "node:os";
 import {combineWords} from "../api/wordsApi";
 
 
-const Word: React.FC<WordDTO> = ({ emoji, word, isNew }) => {
+const Word: React.FC<WordDTO> = ({ emoji, word, isNew, wordId}) => {
 
     // Make draggable
     const {attributes, listeners, setNodeRef: setNodeDraggableRef, transform} = useDraggable({
-        id: word,
+        id: wordId
     });
     // Make droppable
     const {isOver, setNodeRef: setDroppableNodeRef} = useDroppable({
-        id: word,
+        id: wordId
     });
     const refs = useMergeRefs(setNodeDraggableRef, setDroppableNodeRef);
     const style = {
@@ -49,7 +49,7 @@ export const WordList: React.FC<WordListProp> = ({ words, addWord }) => {
         <DndContext onDragEnd={handleDragEnd}>
             {words.map((word) =>
                 (
-                    <Word word={word.word} emoji={word.emoji} id={word.id} isNew={word.isNew}/>
+                    <Word word={word.word} emoji={word.emoji} wordId={word.wordId} isNew={word.isNew}/>
                 )
             )}
         </DndContext>

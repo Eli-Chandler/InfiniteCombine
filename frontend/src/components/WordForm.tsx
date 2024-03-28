@@ -9,8 +9,8 @@ export const WordForm: React.FC<WordFormProp> = ({ addWord }) => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const target = event.target as typeof event.target & {
-            word1: { value: string };
-            word2: { value: string };
+            word1: { value: number };
+            word2: { value: number };
         };
         const word1 = target.word1.value;
         const word2 = target.word2.value;

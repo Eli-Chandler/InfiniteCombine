@@ -6,7 +6,7 @@ export abstract class WordRepository {
 }
 
 export abstract class StoringWordRepository extends WordRepository {
-    abstract getWordById(id: number): Promise<Word | null>;
+    abstract getWordById(id: number | string): Promise<Word | null>;
     abstract getWordByString(word: string): Promise<Word | null>;
     abstract addWord(word: Word): Promise<void>;
     abstract addWordCombination(word1: Word, word2: Word, result: Word): Promise<void>;

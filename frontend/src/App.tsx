@@ -23,7 +23,7 @@ const App: React.FC = () => {
             const updatedWords = prevWords.map(word => ({ ...word, isNew: false }));
 
             // Check if the newWord exists in the array
-            const wordIndex = updatedWords.findIndex(word => word.id === newWord.id);
+            const wordIndex = updatedWords.findIndex(word => word.wordId === newWord.wordId);
 
             if (wordIndex !== -1) {
                 // Replace the existing word with newWord

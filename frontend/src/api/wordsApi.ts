@@ -6,21 +6,21 @@ const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:3000";
 export async function fetchInitialWords(): Promise<WordDTO[]> {
     let response = await axios.get(`${baseUrl}/words/initial`)
     return response.data.map(
-        (wordData: WordDTO) => ({
+        (wordData: {word: string, emoji: string, id: number}) => ({
             word: wordData.word,
             emoji: wordData.emoji,
-            id: wordData.id,
+            wordId: wordData.id,
             isNew: false
         })
     )
 }
 
-export async function combineWords(word1: string, word2: string): Promise<WordDTO> {
+export async function combineWords(word1: number, word2: number): Promise<WordDTO> {
     let response = await axios.get(`${baseUrl}/words/combine?word1=${word1}&word2=${word2}`)
     return {
         word: response.data.word,
         emoji: response.data.emoji,
-        id: response.data.id,
+        wordId: response.data.id,
         isNew: false
     }
 }

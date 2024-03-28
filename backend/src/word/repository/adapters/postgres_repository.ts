@@ -12,9 +12,9 @@ export class PostgresWordRepository extends StoringWordRepository {
 
     }
 
-    async getWordById(id: number): Promise<Word | null> {
+    async getWordById(id: number | string): Promise<Word | null> {
         const client = await this.pool.connect();
-        const res = await client.query('SELECT * FROM words WHERE id = $1', [id]);
+        const res = await client.query<{word: string, emoji: string, id: string}>('SELECT * FROM words WHERE id = $1', [id]);
         client.release();
 
         if (res.rows.length == 0) {
@@ -87,10 +87,12 @@ export class PostgresWordRepository extends StoringWordRepository {
 
         const query = 'INSERT INTO word_combinations (word1_id, word2_id, combination_word_id) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING';
         // Sort the words by id to ensure that the same combination is always stored the same way
-        const values = [Math.min(word1.id, word2.id), Math.max(word1.id, word2.id), result.id];
+        // Sort alphabetically
+        const [firstWord, secondWord] = word1.id < word2.id ? [word1, word2] : [word2, word1];
+        const values = [firstWord.id, secondWord.id, result.id];
 
         const client = await this.pool.connect();
-        await client.query(query, values);
+        await client.query<{}>(query, values);
         client.release();
     }
 }

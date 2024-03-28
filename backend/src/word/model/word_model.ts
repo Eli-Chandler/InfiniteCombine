@@ -1,9 +1,9 @@
 export class Word {
-    id: number | null;
+    id: number | string | null;
     word: string;
     emoji: string;
 
-    constructor(word: string, emoji: string, id: number | null = null) {
+    constructor(word: string, emoji: string, id: number | null | string = null) {
         this.id = id;
         this.word = word;
         this.emoji = emoji;

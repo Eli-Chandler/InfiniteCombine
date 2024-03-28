@@ -2,7 +2,7 @@ import { Word } from '../model/word_model';
 
 export abstract class WordService {
     abstract getWordByString(wordString: string): Promise<Word | null>;
-    abstract getWordById(id: number): Promise<Word | null>;
+    abstract getWordById(id: number | string): Promise<Word | null>;
     abstract addWord(word: Word): Promise<void>;
     async combineWords(word1: Word, word2: Word): Promise<Word | null> {
         // sort the words alphabetically

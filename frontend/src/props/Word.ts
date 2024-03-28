@@ -1,7 +1,7 @@
 export interface WordDTO {
     word: string
     emoji: string
-    id: number
+    wordId: number
     isNew: boolean
 }
 
