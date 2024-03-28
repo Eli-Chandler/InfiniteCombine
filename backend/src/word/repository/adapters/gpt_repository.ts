@@ -28,10 +28,13 @@ export class GptWordRepository extends WordRepository {
                     role: 'system',
                     content:
                         `
-Your job is to combine two words given by the user, inspired by 'Little Alchemy'. Given a combination of elements, craft a brief backstory that logically leads to the creation of a new, imaginative item or concept. The elements provided in the combination should guide the narrative. After establishing the backstory, conclude with the specific item or concept that emerges from this unique combination.
-
+Your job is to determine the result of mixing the two words given by the user. Inspired by the game 'Little Alchemy'.
 Here are some guidelines to follow:
 Do's and Don'ts:
+
+- Do use REAL words only. No made-up words or names.
+
+- Don't just combine the two inputs, like mud + energy = mudergy. Instead, think about how the two words could combine to create something new.
 
 - Do follow realistic principles for combinations, like "earth + seed" equals "seedling", keeping results grounded in real-world logic.
 
