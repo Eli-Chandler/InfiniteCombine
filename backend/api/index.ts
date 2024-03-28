@@ -5,13 +5,26 @@ import {StoringAndSecondaryWordService} from "../src/word/service/adapters/Stori
 import {Word} from "../src/word/model/word_model";
 import cors from "cors";
 import { config } from "dotenv";
+import {WordService} from "../src/word/service/word_service";
+import {PostgresWordRepository} from "../src/word/repository/adapters/postgres_repository";
+import {Client} from "pg";
 
 config();
 
 
 const app: Express = express();
 const port: number = 3000;
-const wordService = new StoringAndSecondaryWordService( new MemoryWordRepository(), new GptWordRepository() );
+
+async function getWordService(): Promise<WordService> {
+const dbUrl = process.env.DATABASE_URL;
+    if (dbUrl) {
+        return new StoringAndSecondaryWordService(new PostgresWordRepository(dbUrl), new GptWordRepository());
+    } else {
+        return new StoringAndSecondaryWordService(new MemoryWordRepository(), new GptWordRepository());
+    }
+
+}
+let wordService: WordService;
 
 app.use(cors<Request>());
 
@@ -66,6 +79,7 @@ async function initializeWords() {
 
 // Modify this part to wait for initialization before listening
 async function startServer() {
+    wordService = await getWordService(); // Wait for the service to be created
     await initializeWords(); // Wait for the initialization to complete
     app.listen(port, () => {
         console.log(`[server]: Server is running at http://localhost:${port}`);
